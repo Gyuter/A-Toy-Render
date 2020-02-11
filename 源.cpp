@@ -3,10 +3,18 @@
 #include"random.h"
 #include"camera.h"
 #include"arts.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include"stb_image_write.h"
 
-inline void out_color(std::fstream& fs, int r, int g, int b)
+const int nx = 600;
+const int ny = 600;
+char pic[ny * nx * 3];
+
+inline void out_color(int x, int y, int r, int g, int b)
 {
-	fs << r << ' ' << g << ' ' << b << '\n';
+	pic[y * ny*3 + x * 3] = r;
+	pic[y * ny *3+ x * 3 + 1] = g;
+	pic[y * ny *3+ x * 3 + 2] = b;
 }
 
 vec3 color(const ray& r, hittable* world,int depth)
@@ -28,9 +36,7 @@ vec3 color(const ray& r, hittable* world,int depth)
 
 int main()
 {
-	int nx = 600;
-	int ny = 600;
-	int ns = 2000;
+	int ns = 50;
 
 	vec3 lookfrom(278, 278, -800);
 	vec3 lookat(278, 278, 0);
@@ -39,8 +45,6 @@ int main()
 
 	hittable* world = cornell_box();
 
-	std::fstream fs("img.ppm");
-	fs << "P3\n" << nx << ' ' << ny << "\n255\n";
 	for(int y=ny-1;y>=0;y--)
 		for (int x = 0; x < nx; x++)
 		{
@@ -52,10 +56,11 @@ int main()
 				col += color(cam.get_ray(u, v), world, 0);
 			}
 			col /= float(ns);
-			out_color(fs, int(255.99 * sqrt(col.r())), 
+			out_color(x,y,int(255.99 * sqrt(col.r())), 
 						  int(255.99 * sqrt(col.g())), 
 						  int(255.99 * sqrt(col.b())));
 		}
-	fs.close();
+	stbi_flip_vertically_on_write(1);
+	stbi_write_jpg((const char*)"img.jpg", nx, ny, 3, (const void*)pic, 0);
 	return 0;
 }
