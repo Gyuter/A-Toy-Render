@@ -7,6 +7,7 @@
 #include"stb_image.h"
 #include"box.h"
 #include"constant_medium.h"
+#include"rectangle.h"
 
 hittable* two_spheres()
 {
@@ -16,6 +17,18 @@ hittable* two_spheres()
 	hittable** list = new hittable * [2];
 	list[0] = new sphere(vec3(0, -1000, 0), 1000, new metal(vec3(0.65, 0.65, 0.65), 0.075));
 	list[1] = new sphere(vec3(0, 2, 0), 2, new lambertian(text));
+	return new hittable_list(list, 2);
+}
+
+hittable* pic_back()
+{
+	int nx, ny, nn;
+	unsigned char* img = stbi_load("nimg.jpg", &nx, &ny, &nn, 0);
+	printf("%d %d %d", nx, ny, nn);
+	texture* text = new image_texture(img, nx, ny);
+	hittable** list = new hittable * [2];
+	list[0] = new sphere(vec3(0, 0, 1), 2, new dielectric(0.8));
+	list[1] = new xy_rect(-8, 8, -6, 6, -3, new diffuse_light(text));
 	return new hittable_list(list, 2);
 }
 

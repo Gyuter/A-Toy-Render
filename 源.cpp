@@ -6,15 +6,15 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include"stb_image_write.h"
 
-const int nx = 600;
-const int ny = 600;
-char pic[ny * nx * 3];
+const int nx = 400;
+const int ny = 300;
+unsigned char pic[ny * nx * 3];
 
 inline void out_color(int x, int y, int r, int g, int b)
 {
-	pic[y * ny*3 + x * 3] = r;
-	pic[y * ny *3+ x * 3 + 1] = g;
-	pic[y * ny *3+ x * 3 + 2] = b;
+	pic[y * nx * 3 + x * 3] = r;
+	pic[y * nx *3+ x * 3 + 1] = g;
+	pic[y * nx *3+ x * 3 + 2] = b;
 }
 
 vec3 color(const ray& r, hittable* world,int depth)
@@ -31,19 +31,19 @@ vec3 color(const ray& r, hittable* world,int depth)
 		else return emitted;
 	}
 	else
-		return vec3(0,0,0);
+		return vec3(0, 0, 0);
 }
 
 int main()
 {
 	int ns = 50;
 
-	vec3 lookfrom(278, 278, -800);
-	vec3 lookat(278, 278, 0);
-	float dis_to_focus = 10.0;
-	camera cam(lookfrom,lookat,vec3(0,1,0),40,float(nx)/float(ny),0,dis_to_focus,0.0,1.0);
+	vec3 lookfrom(0, 0, 5);
+	vec3 lookat(0, 0, 2);
+	float dis_to_focus = 8;
+	camera cam(lookfrom,lookat,vec3(0,1,0),73.7,float(nx)/float(ny),0,dis_to_focus,0.0,1.0);
 
-	hittable* world = cornell_box();
+	hittable* world = pic_back();
 
 	for(int y=ny-1;y>=0;y--)
 		for (int x = 0; x < nx; x++)
